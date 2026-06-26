@@ -2,6 +2,9 @@
 
 A macOS menu bar app that bridges Home Assistant `media_player` entities into the native macOS Now Playing experience — Control Center, Lock Screen, and hardware media keys all work with whatever is playing in HA.
 
+<img width="296" height="267" alt="CleanShot 2026-06-26 at 09 06 13" src="https://github.com/user-attachments/assets/0e56e55e-f259-4672-90a7-2d7ef878a059" />
+<img width="320" height="188" alt="CleanShot 2026-06-26 at 09 07 30" src="https://github.com/user-attachments/assets/ab8890d2-b1b4-4a92-9342-b129128b78e9" />
+
 ## Features
 
 - Shows the active media player's title, artist, album art, and playback state in the macOS Now Playing widget
