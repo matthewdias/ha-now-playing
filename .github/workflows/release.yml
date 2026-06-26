@@ -1,0 +1,149 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: macos-26
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen
+
+      - name: Parse version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          BUILD="${GITHUB_RUN_NUMBER}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+
+      - name: Import Developer ID certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_BASE64 }}
+          p12-password: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+
+      - name: Archive
+        run: |
+          xcodebuild archive \
+            -scheme HANowPlaying \
+            -destination 'generic/platform=macOS' \
+            -archivePath "$RUNNER_TEMP/HANowPlaying.xcarchive" \
+            MARKETING_VERSION="${{ steps.version.outputs.version }}" \
+            CURRENT_PROJECT_VERSION="${{ steps.version.outputs.build }}" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Developer ID Application" \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
+
+      - name: Export archive
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key>
+  <string>developer-id</string>
+  <key>teamID</key>
+  <string>${{ secrets.APPLE_TEAM_ID }}</string>
+  <key>signingStyle</key>
+  <string>manual</string>
+  <key>signingCertificate</key>
+  <string>Developer ID Application</string>
+</dict>
+</plist>
+EOF
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/HANowPlaying.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
+
+      - name: Package release DMG
+        run: |
+          APP_PATH="$RUNNER_TEMP/export/HANowPlaying.app"
+          STAGING="$RUNNER_TEMP/dmg_staging"
+          RELEASE_DMG="$RUNNER_TEMP/HANowPlaying-${{ steps.version.outputs.tag }}.dmg"
+          mkdir -p "$STAGING"
+          cp -r "$APP_PATH" "$STAGING/"
+          ln -s /Applications "$STAGING/Applications"
+          hdiutil create \
+            -volname "HA Now Playing" \
+            -srcfolder "$STAGING" \
+            -ov \
+            -format UDZO \
+            "$RELEASE_DMG"
+          codesign --sign "Developer ID Application" "$RELEASE_DMG"
+          echo "RELEASE_DMG=$RELEASE_DMG" >> "$GITHUB_ENV"
+
+      - name: Notarize
+        uses: apple-actions/notarize-app@v1
+        with:
+          product-path: ${{ env.RELEASE_DMG }}
+          apple-id: ${{ secrets.APPLE_ID }}
+          app-password: ${{ secrets.APPLE_APP_PASSWORD }}
+          team-id: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Generate appcast entry
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          SPARKLE_VERSION=$(jq -r '.pins[] | select(.identity | ascii_downcase | contains("sparkle")) | .state.version' Package.resolved)
+          curl -fsSL "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz" \
+            -o "$RUNNER_TEMP/sparkle.tar.xz"
+          tar -xf "$RUNNER_TEMP/sparkle.tar.xz" -C "$RUNNER_TEMP" ./bin/generate_appcast
+          chmod +x "$RUNNER_TEMP/bin/generate_appcast"
+
+          mkdir -p "$RUNNER_TEMP/releases"
+          cp "$RELEASE_DMG" "$RUNNER_TEMP/releases/"
+
+          printf '%s' "$SPARKLE_PRIVATE_KEY" > "$RUNNER_TEMP/sparkle_private_key"
+          "$RUNNER_TEMP/bin/generate_appcast" "$RUNNER_TEMP/releases" \
+            --ed-key-file "$RUNNER_TEMP/sparkle_private_key" \
+            --download-url-prefix "https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.tag }}/" \
+            -o "$RUNNER_TEMP/new_appcast.xml"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: HA Now Playing ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: ${{ env.RELEASE_DMG }}
+
+      - name: Update appcast
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          python3 - "$RUNNER_TEMP/new_appcast.xml" <<'EOF'
+          import sys, xml.etree.ElementTree as ET
+
+          ET.register_namespace('sparkle', 'http://www.andymatuschak.org/xml-namespaces/sparkle')
+          ET.register_namespace('dc', 'http://purl.org/dc/elements/1.1/')
+
+          new_item = ET.parse(sys.argv[1]).find('.//item')
+          item_str = ET.tostring(new_item, encoding='unicode')
+
+          content = open('appcast.xml').read()
+          open('appcast.xml', 'w').write(content.replace('  </channel>', f'  {item_str}\n  </channel>'))
+          EOF
+
+          git add appcast.xml
+          git commit -m "Release ${{ steps.version.outputs.tag }}"
+          git push origin HEAD:main

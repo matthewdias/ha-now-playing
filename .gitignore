@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Xcode
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# XcodeGen
+# HANowPlaying.xcodeproj is generated — do not commit
+HANowPlaying.xcodeproj/
+
+# Claude Code
+.claude/settings.local.json
+.claude/*.md
+
+# xcode-build-server (machine-specific)
+buildServer.json
+
+# Build artifacts
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "swiftlint lint --fix --quiet \"$CLAUDE_TOOL_INPUT_FILE_PATH\" 2>/dev/null; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

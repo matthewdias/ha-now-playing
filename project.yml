@@ -1,0 +1,89 @@
+name: HANowPlaying
+options:
+  bundleIdPrefix: com.matthewdias
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+  xcodeVersion: "26.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    ENABLE_HARDENED_RUNTIME: YES
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+  configurations:
+    Debug:
+      CODE_SIGN_STYLE: Manual
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
+    Release:
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: $(DEVELOPMENT_TEAM)
+
+packages:
+  KeychainAccess:
+    url: https://github.com/kishikawakatsumi/KeychainAccess
+    from: 4.2.2
+  Nuke:
+    url: https://github.com/kean/Nuke
+    from: 13.0.0
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.0.0
+
+targets:
+  HANowPlaying:
+    type: application
+    platform: macOS
+    deploymentTarget: "15.0"
+    sources:
+      - Sources/HANowPlaying
+    dependencies:
+      - package: KeychainAccess
+        product: KeychainAccess
+      - package: Nuke
+        product: Nuke
+      - package: Nuke
+        product: NukeUI
+      - package: Sparkle
+        product: Sparkle
+    info:
+      path: Sources/HANowPlaying/Info.plist
+      properties:
+        CFBundleName: HA Now Playing
+        CFBundleDisplayName: HA Now Playing
+        CFBundleIdentifier: com.matthewdias.ha-now-playing
+        LSUIElement: true
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        SUFeedURL: https://raw.githubusercontent.com/matthewdias/ha-now-playing/main/appcast.xml
+        SUPublicEDKey: 0w3EuEHMpdY+Y7lvqKt4HvVb2HThSpx/ytamPVHCzqw=
+        SURequireSignedFeed: true
+        SUVerifyUpdateBeforeExtraction: true
+    entitlements:
+      path: Sources/HANowPlaying/HANowPlaying.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.matthewdias.ha-now-playing
+        INFOPLIST_FILE: Sources/HANowPlaying/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/HANowPlaying/HANowPlaying.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  HANowPlayingTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "15.0"
+    sources:
+      - Tests/HANowPlayingTests
+    dependencies:
+      - target: HANowPlaying
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.matthewdias.ha-now-playing-tests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/HANowPlaying.app/Contents/MacOS/HANowPlaying
+        BUNDLE_LOADER: $(TEST_HOST)
+        GENERATE_INFOPLIST_FILE: YES

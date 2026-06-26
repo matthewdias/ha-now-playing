@@ -1,0 +1,70 @@
+included:
+  - Sources
+  - Tests
+
+disabled_rules:
+  - nesting                   # SwiftUI nested types inside body are idiomatic
+  - trailing_whitespace
+  - blanket_disable_command   # file-level disables in test files are intentional
+
+opt_in_rules:
+  - array_init
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - flatmap_over_map_reduce
+  - for_where
+  - identical_operands
+  - joined_default_parameter
+  - last_where
+  - legacy_multiple
+  - non_optional_string_data_conversion
+  - operator_usage_whitespace
+  - optional_enum_case_matching
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - sorted_first_last
+  - toggle_bool
+  - unneeded_parentheses_in_closure_argument
+  - force_unwrapping  # excluded in Tests (see force_unwrapping config below)
+  - yoda_condition
+
+custom_rules:
+  no_observable_object:
+    name: "ObservableObject"
+    regex: "ObservableObject"
+    message: "Use @Observable instead of ObservableObject (see Coding Standards in CONTRIBUTING.md)"
+    severity: error
+
+  no_navigation_view:
+    name: "NavigationView"
+    regex: "NavigationView"
+    message: "Use NavigationStack instead of NavigationView"
+    severity: error
+
+identifier_name:
+  min_length: 1
+  validates_start_with_lowercase: true
+  allowed_symbols: ["_"]
+
+line_length:
+  warning: 120
+  error: 160
+  ignores_urls: true
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 700
