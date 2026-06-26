@@ -21,7 +21,8 @@ struct EntityParsingTests {
             mediaSeriesTitle: nil, mediaSeason: nil, mediaEpisode: nil, mediaChannel: nil,
             appName: nil, appId: "com.spotify.Spotify", entityPicture: "/api/media/art.jpg",
             mediaDuration: 263.0, mediaPosition: nil, mediaPositionUpdatedAt: nil,
-            supportedFeatures: MediaPlayerEntityFeature([.nextTrack, .volumeSet, .volumeMute]).rawValue, volumeLevel: 0.6, isMuted: false,
+            supportedFeatures: MediaPlayerEntityFeature([.nextTrack, .volumeSet, .volumeMute]).rawValue,
+            volumeLevel: 0.6, isMuted: false,
             shuffle: true, repeatMode: "all"
         )
         let state = buildEntityState(entityId: "media_player.spotify", stateStr: "playing",

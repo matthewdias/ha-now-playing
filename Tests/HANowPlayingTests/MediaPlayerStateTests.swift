@@ -176,7 +176,8 @@ struct MediaPlayerStateTests {
         (MediaPlayerEntityFeature.shuffle, { @Sendable (s: MediaPlayerState) in s.supportsShuffle }),
         (MediaPlayerEntityFeature.repeat, { @Sendable (s: MediaPlayerState) in s.supportsRepeat })
     ] as [(MediaPlayerEntityFeature, @Sendable (MediaPlayerState) -> Bool)])
-    func capabilityFlagSetWhenBitPresent(feature: MediaPlayerEntityFeature, flag: @Sendable (MediaPlayerState) -> Bool) {
+    func capabilityFlagSetWhenBitPresent(feature: MediaPlayerEntityFeature,
+                                         flag: @Sendable (MediaPlayerState) -> Bool) {
         #expect(flag(makeState(features: feature)) == true)
     }
 
@@ -189,7 +190,8 @@ struct MediaPlayerStateTests {
         (MediaPlayerEntityFeature.shuffle, { @Sendable (s: MediaPlayerState) in s.supportsShuffle }),
         (MediaPlayerEntityFeature.repeat, { @Sendable (s: MediaPlayerState) in s.supportsRepeat })
     ] as [(MediaPlayerEntityFeature, @Sendable (MediaPlayerState) -> Bool)])
-    func capabilityFlagClearWhenBitAbsent(feature: MediaPlayerEntityFeature, flag: @Sendable (MediaPlayerState) -> Bool) {
+    func capabilityFlagClearWhenBitAbsent(feature: MediaPlayerEntityFeature,
+                                          flag: @Sendable (MediaPlayerState) -> Bool) {
         #expect(flag(makeState(features: [])) == false)
     }
 

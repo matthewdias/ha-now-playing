@@ -116,7 +116,8 @@ struct MediaPlayerState: Identifiable, Equatable, Sendable {
     }
 
     // Custom equality used by SwiftUI for diffing. Intentional omissions:
-    // - mediaPositionUpdatedAt: position changes always arrive with mediaPosition; timestamp alone doesn't warrant a redraw.
+    // - mediaPositionUpdatedAt: position changes always arrive with mediaPosition; timestamp alone
+    //   doesn't warrant a redraw.
     // - friendlyName, mediaAlbumName, mediaAlbumArtist, mediaContentType, mediaSeriesTitle,
     //   mediaSeason, mediaEpisode, mediaChannel, appName: secondary/tertiary display fields whose
     //   changes always accompany a title, state, or artwork change that is already included.
