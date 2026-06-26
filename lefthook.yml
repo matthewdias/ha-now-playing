@@ -1,0 +1,4 @@
+pre-commit:
+  commands:
+    swiftlint:
+      run: swiftlint lint --strict

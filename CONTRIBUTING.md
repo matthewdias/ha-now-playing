@@ -45,6 +45,15 @@ Tests/HANowPlayingTests/
 
 The data flow is: `HomeAssistantClient` receives WebSocket diffs → `ActiveEntitySelector` picks the active entity → `NowPlayingController` pushes state to macOS. `AppState` owns all three and wires them together via `withObservationTracking`.
 
+## Git hooks
+
+This project uses [Lefthook](https://github.com/evilmartians/lefthook) to run SwiftLint as a pre-commit hook. After cloning, install it once:
+
+```bash
+brew install lefthook
+lefthook install
+```
+
 ## Running tests
 
 ```bash
