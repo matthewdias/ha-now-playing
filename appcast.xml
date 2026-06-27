@@ -14,5 +14,14 @@
             <enclosure url="https://github.com/matthewdias/ha-now-playing/releases/download/v0.1.0/HANowPlaying-v0.1.0.dmg" length="2620765" type="application/octet-stream" sparkle:edSignature="2voC3ae7QHN65quSO5I/ag9LilP65BhbeLxgXGOGNg7ynlYkX+UI1/+g8DUuBiqxOulF5N70JY9xZEhxKtnKBg==" />
         </item>
     
+  <item xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+            <title>0.1.1</title>
+            <pubDate>Sat, 27 Jun 2026 15:24:56 +0000</pubDate>
+            <sparkle:version>18</sparkle:version>
+            <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/matthewdias/ha-now-playing/releases/download/v0.1.1/HANowPlaying-v0.1.1.dmg" length="2620702" type="application/octet-stream" sparkle:edSignature="815OTNcEOvKW45elb2Wvk8IJo+jkqR++UftwkLrlogPtTyh0jlyxGBsbu2gdKN11qBMItFKv0pj+NTUH7edDAA==" />
+        </item>
+    
   </channel>
 </rss>
