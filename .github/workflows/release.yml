@@ -64,7 +64,7 @@ jobs:
           STAGING="$RUNNER_TEMP/dmg_staging"
           RELEASE_DMG="$RUNNER_TEMP/HANowPlaying-${{ steps.version.outputs.tag }}.dmg"
           mkdir -p "$STAGING"
-          cp -r "$APP_PATH" "$STAGING/"
+          ditto "$APP_PATH" "$STAGING/HANowPlaying.app"
           ln -s /Applications "$STAGING/Applications"
           hdiutil create \
             -volname "HA Now Playing" \
