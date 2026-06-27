@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install XcodeGen
-        run: brew install xcodegen
+        run: HOMEBREW_NO_REQUIRE_TAP_TRUST=1 brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen
