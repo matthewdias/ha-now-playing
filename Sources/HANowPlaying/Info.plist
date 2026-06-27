@@ -28,7 +28,7 @@
 		<true/>
 	</dict>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/matthewdias/ha-now-playing/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/matthewdias/ha-now-playing/release-feed/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>0w3EuEHMpdY+Y7lvqKt4HvVb2HThSpx/ytamPVHCzqw=</string>
 	<key>SURequireSignedFeed</key>
