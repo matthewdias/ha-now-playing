@@ -5,5 +5,14 @@
     <link>https://raw.githubusercontent.com/matthewdias/ha-now-playing/release-feed/appcast.xml</link>
     <description>HA Now Playing release feed</description>
     <language>en</language>
+  <item xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+            <title>0.1.0</title>
+            <pubDate>Sat, 27 Jun 2026 15:07:52 +0000</pubDate>
+            <sparkle:version>17</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/matthewdias/ha-now-playing/releases/download/v0.1.0/HANowPlaying-v0.1.0.dmg" length="2620765" type="application/octet-stream" sparkle:edSignature="2voC3ae7QHN65quSO5I/ag9LilP65BhbeLxgXGOGNg7ynlYkX+UI1/+g8DUuBiqxOulF5N70JY9xZEhxKtnKBg==" />
+        </item>
+    
   </channel>
 </rss>
