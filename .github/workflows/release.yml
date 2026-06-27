@@ -75,12 +75,13 @@ jobs:
           echo "RELEASE_DMG=$RELEASE_DMG" >> "$GITHUB_ENV"
 
       - name: Notarize
-        uses: apple-actions/notarize-app@v1
-        with:
-          product-path: ${{ env.RELEASE_DMG }}
-          apple-id: ${{ secrets.APPLE_ID }}
-          app-password: ${{ secrets.APPLE_APP_PASSWORD }}
-          team-id: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool submit "$RELEASE_DMG" \
+            --apple-id "${{ secrets.APPLE_ID }}" \
+            --password "${{ secrets.APPLE_APP_PASSWORD }}" \
+            --team-id "URLH8RL66Y" \
+            --wait
+          xcrun stapler staple "$RELEASE_DMG"
 
       - name: Generate appcast entry
         env:
