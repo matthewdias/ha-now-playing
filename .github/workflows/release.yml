@@ -45,6 +45,7 @@ jobs:
             -scheme HANowPlaying \
             -destination 'generic/platform=macOS' \
             -archivePath "$RUNNER_TEMP/HANowPlaying.xcarchive" \
+            -quiet \
             MARKETING_VERSION="${{ steps.version.outputs.version }}" \
             CURRENT_PROJECT_VERSION="${{ steps.version.outputs.build }}" \
             CODE_SIGN_STYLE=Manual \
@@ -77,22 +78,11 @@ jobs:
 
       - name: Notarize
         run: |
-          SUBMIT_OUTPUT=$(xcrun notarytool submit "$RELEASE_DMG" \
+          xcrun notarytool submit "$RELEASE_DMG" \
             --apple-id "${{ secrets.APPLE_ID }}" \
             --password "${{ secrets.APPLE_APP_PASSWORD }}" \
             --team-id "URLH8RL66Y" \
-            --wait 2>&1)
-          echo "$SUBMIT_OUTPUT"
-          SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep '  id:' | head -1 | awk '{print $2}')
-          STATUS=$(echo "$SUBMIT_OUTPUT" | grep '  status:' | awk '{print $2}')
-          if [ "$STATUS" != "Accepted" ]; then
-            echo "Notarization failed — fetching log:"
-            xcrun notarytool log "$SUBMISSION_ID" \
-              --apple-id "${{ secrets.APPLE_ID }}" \
-              --password "${{ secrets.APPLE_APP_PASSWORD }}" \
-              --team-id "URLH8RL66Y"
-            exit 1
-          fi
+            --wait
           xcrun stapler staple "$RELEASE_DMG"
 
       - name: Generate appcast entry
